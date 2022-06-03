@@ -1,17 +1,37 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, { useState } from "react";
 
 function App(props) {
-  const [ usuario, setUsuario ] = useState('');
-  
-  function handlePesquisa(){
-    axios.get(`https://api.github.com/users/${usuario}/repos`).then(response => console.log(response.data));
-  }
-  
+  const [usuario, setUsuario] = useState("");
+  const [repositorios, setRepositorios] = useState([]);
+
+  const getUserRepo = async () => {
+    return fetch(`https://api.github.com/users/${usuario}/repos`)
+      .then((response) => response.json())
+      .then((data) => {
+        setRepositorios(data);
+      });
+  };
+
   return (
     <>
-      <input className="usuarioInput" placeholder="Digite um usuário Github" value={usuario} onChange={e => setUsuario(e.target.value)}/>
-      <button type="button" onClick={handlePesquisa()}>Pesquisar</button>
+      <input
+        className="usuarioInput"
+        placeholder="Digite um usuário Github"
+        value={usuario}
+        onChange={(e) => setUsuario(e.target.value)}
+      />
+      <button type="button" onClick={getUserRepo}>
+        Pesquisar
+      </button>
+      {repositorios.length !== 0 ? (
+        <div>
+          {repositorios.map((item, _) => 
+            <p>{item.name}</p>
+          )}
+        </div>
+      ) : (
+        <div>Nenhum repositório encontrado!</div>
+      )}
     </>
   );
 }
